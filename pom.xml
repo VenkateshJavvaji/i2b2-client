@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.eurekaclinical</groupId>
         <artifactId>eurekaclinical-parent-standard-deps</artifactId>
-        <version>1-Alpha-5-SNAPSHOT</version>
+        <version>1-Alpha-5</version>
     </parent>
 
     <url>https://github.com/eurekaclinical/i2b2-client.git</url>
@@ -31,7 +31,7 @@
     </issueManagement>
     
     <properties>
-        <eurekaclinical-common-version>1.0-Alpha-5</eurekaclinical-common-version>
+        <eurekaclinical-common-version>1.0-Alpha-7</eurekaclinical-common-version>
     </properties>
 	
     <build>

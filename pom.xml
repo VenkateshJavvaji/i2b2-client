@@ -3,7 +3,7 @@
     <groupId>org.eurekaclinical</groupId>
     <artifactId>i2b2-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-Alpha-3-SNAPSHOT</version>
+    <version>1.0-Alpha-3</version>
     <name>i2b2 Client</name>
     <description>Library for making web services calls to an instance of i2b2.
     </description>
@@ -21,7 +21,7 @@
         <connection>scm:git:https://github.com/eurekaclinical/i2b2-client.git</connection>
         <developerConnection>scm:git:https://github.com/eurekaclinical/i2b2-client.git</developerConnection>
         <url>https://github.com/eurekaclinical/i2b2-client.git</url>
-        <tag>HEAD</tag>
+        <tag>i2b2-client-1.0-Alpha-3</tag>
     </scm>
 	
     <issueManagement>

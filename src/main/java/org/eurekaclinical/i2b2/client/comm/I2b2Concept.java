@@ -1,5 +1,6 @@
 package org.eurekaclinical.i2b2.client.comm;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /*
@@ -83,10 +84,6 @@ public final class I2b2Concept {
         this.isSynonym = isSynonym;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     /**
      * Gets the JPA entity's ID
      *
@@ -213,6 +210,10 @@ public final class I2b2Concept {
         return columnName;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     /**
      * Sets the column name.
      *
@@ -328,6 +329,21 @@ public final class I2b2Concept {
      */
     public void setXmlOrig(String xmlOrig) {
         this.xmlOrig = xmlOrig;
+    }
+
+    public String getColumnDataType() {
+        return "T";
+    }
+
+    public String getFactTableColumn() {
+        String tableNameUC = StringUtils.upperCase(this.tableName);
+        if ("CONCEPT_DIMENSION".equals(tableNameUC)) {
+            return "concept_cd";
+        } else if ("PATIENT_DIMENSION".equals(tableNameUC)) {
+            return "patient_num";
+        } else {
+            throw new IllegalStateException("Unexpected table name " + this.tableName);
+        }
     }
 
     @Override

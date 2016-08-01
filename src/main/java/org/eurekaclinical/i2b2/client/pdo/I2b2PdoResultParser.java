@@ -19,7 +19,6 @@ package org.eurekaclinical.i2b2.client.pdo;
  * limitations under the License.
  * #L%
  */
-import org.eurekaclinical.i2b2.client.I2b2CommUtil;
 import org.eurekaclinical.i2b2.client.xml.XmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +29,9 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,11 +48,6 @@ import org.eurekaclinical.i2b2.client.xml.I2b2XmlException;
 public class I2b2PdoResultParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(I2b2PdoResultParser.class);
-
-    /*
-	 * the i2b2 date format
-     */
-    private final DateFormat i2b2DateFormat;
 
     /*
 	 * maps from IDs to patients, events, and observers (providers)
@@ -79,7 +73,6 @@ public class I2b2PdoResultParser {
      */
     public I2b2PdoResultParser(Document xmlDoc) {
         d = xmlDoc;
-        i2b2DateFormat = new SimpleDateFormat(I2b2CommUtil.I2B2_DATE_FMT);
         patients = new HashMap<>();
         events = new HashMap<>();
         observers = new HashMap<>();
@@ -266,20 +259,13 @@ public class I2b2PdoResultParser {
 
     private Date date(Element elt, String tagName) {
         String dtTxt = text(elt, tagName);
-        // remove the last colon (:)
-        // we have to do this because Java's SimpleDateFormat does not directly
-        // support the format i2b2 is using: 2001-07-04T12:08:56.235-07:00
-        // even though it is a valid ISO-8601 date
-        // the closest Java has is: 2001-07-04T12:08:56.235-0700 (yyyy-MM-dd'T'HH:mm:ss.SSSZ)
-        // the other alternative is write our own date parser
-        int colonIdx = dtTxt.lastIndexOf(':');
-        if (colonIdx >= 0) {
-            dtTxt = dtTxt.substring(0, colonIdx).concat(dtTxt.substring(colonIdx + 1));
-        }
-
         try {
-            return i2b2DateFormat.parse(dtTxt);
-        } catch (ParseException e) {
+            if (dtTxt.endsWith("Z")) {
+                return Date.from(Instant.parse(dtTxt));
+            } else {
+                return Date.from(OffsetDateTime.parse(dtTxt).toInstant());
+            }
+        } catch (DateTimeParseException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Unable to parse date: {}", dtTxt);
             } else if (null != dtTxt && !dtTxt.isEmpty()) {

@@ -1,10 +1,10 @@
-package org.eurekaclinical.i2b2.client.tests;
+package org.eurekaclinical.i2b2.client;
 
-/*
+/*-
  * #%L
- * i2b2 Export Service
+ * i2b2 Client
  * %%
- * Copyright (C) 2013 Emory University
+ * Copyright (C) 2016 Emory University
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@ package org.eurekaclinical.i2b2.client.tests;
  * #L%
  */
 
-import org.eurekaclinical.i2b2.client.I2b2UserAuthenticator;
-import org.eurekaclinical.i2b2.client.I2b2UserAuthenticator;
-import org.eurekaclinical.i2b2.client.comm.I2b2AuthMetadata;
-import org.eurekaclinical.i2b2.client.xml.I2b2XmlException;
+/**
+ *
+ * @author Andrew Post
+ */
+public class I2b2UserSetterFactoryImpl implements I2b2UserSetterFactory {
 
-public class MockI2b2UserAuthenticator implements I2b2UserAuthenticator {
-
-	@Override
-	public boolean authenticateUser(I2b2AuthMetadata authMetadata) throws I2b2XmlException {
-		return authMetadata.getUsername().equals("test-user");
-	}
+    @Override
+    public I2b2UserSetter getInstance() {
+        return new I2b2UserSetterImpl();
+    }
+    
 }

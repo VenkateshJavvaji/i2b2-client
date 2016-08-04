@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.eurekaclinical.i2b2.client.props;
+package org.eurekaclinical.i2b2.client;
 
 /*-
  * #%L
@@ -27,24 +22,25 @@ package org.eurekaclinical.i2b2.client.props;
 
 /**
  *
- * @author arpost
+ * @author Andrew Post
  */
-public interface I2b2Properties {
+public final class I2b2UserSetterException extends I2b2Exception {
 
-    /**
-     * Gets the URL of the i2b2 services. Reads from the properties file first
-     * if necessary.
-     *
-     * @return the URL as a String
-     */
-    String getI2b2ServiceHostUrl();
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Gets the URL of the i2b2 proxy cell. Reads from the properties file first
-     * if necessary.
-     *
-     * @return the URL as a String
-     */
-    String getProxyUrl();
+    I2b2UserSetterException() {
+    }
 
+    I2b2UserSetterException(String message) {
+        super(message);
+    }
+
+    I2b2UserSetterException(Throwable cause) {
+        super(cause);
+    }
+
+    I2b2UserSetterException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    
 }

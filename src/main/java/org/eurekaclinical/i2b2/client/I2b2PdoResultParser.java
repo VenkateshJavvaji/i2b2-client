@@ -1,4 +1,4 @@
-package org.eurekaclinical.i2b2.client.pdo;
+package org.eurekaclinical.i2b2.client;
 
 /*
  * #%L
@@ -19,7 +19,7 @@ package org.eurekaclinical.i2b2.client.pdo;
  * limitations under the License.
  * #L%
  */
-import org.eurekaclinical.i2b2.client.xml.XmlUtil;
+import org.eurekaclinical.i2b2.client.XmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,7 +37,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.eurekaclinical.i2b2.client.xml.I2b2XmlException;
+import org.eurekaclinical.i2b2.client.pdo.Event;
+import org.eurekaclinical.i2b2.client.pdo.I2b2PdoResults;
+import org.eurekaclinical.i2b2.client.pdo.Observation;
+import org.eurekaclinical.i2b2.client.pdo.Observer;
+import org.eurekaclinical.i2b2.client.pdo.Patient;
 
 /**
  * Parser for i2b2 PDO result XML.

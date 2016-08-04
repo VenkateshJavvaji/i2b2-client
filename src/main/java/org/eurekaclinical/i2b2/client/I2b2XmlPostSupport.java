@@ -28,7 +28,6 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
@@ -38,7 +37,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.eurekaclinical.i2b2.client.props.I2b2Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -49,15 +47,11 @@ import org.xml.sax.SAXException;
  *
  * @author Andrew Post
  */
-public class I2b2XmlPostSupport {
+class I2b2XmlPostSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(I2b2XmlPostSupport.class);
 
-    private final I2b2Properties properties;
-
-    @Inject
-    public I2b2XmlPostSupport(I2b2Properties inProperties) {
-        this.properties = inProperties;
+    I2b2XmlPostSupport() {
     }
 
     /**
@@ -72,10 +66,10 @@ public class I2b2XmlPostSupport {
      * @throws SAXException if an error occurs
      * @throws IllegalStateException if an error occurs
      */
-    public Document postXmlToI2b2(String xml) throws IOException, IllegalStateException,
+    Document postXmlToI2b2(URL proxyUrl, String xml) throws IOException, IllegalStateException,
             SAXException, ParserConfigurationException {
         LOGGER.debug("POSTing XML: {}", xml);
-        try (InputStream contentIn = executePost(xml)) {
+        try (InputStream contentIn = executePost(proxyUrl, xml)) {
             Document result = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder()
                     .parse(contentIn);
@@ -86,10 +80,6 @@ public class I2b2XmlPostSupport {
         }
     }
 
-    public I2b2Properties getProperties() {
-        return properties;
-    }
-    
     /**
      * Generates a random message number for i2b2 requests. Copied from the i2b2
      * SMART project: https://community.i2b2.org/wiki/display/SMArt/SMART+i2b2
@@ -97,7 +87,7 @@ public class I2b2XmlPostSupport {
      *
      * @return a unique message ID
      */
-    public String generateMessageId() {
+    String generateMessageId() {
         StringWriter strWriter = new StringWriter();
         for (int i = 0; i < 20; i++) {
             int num = getValidAcsiiValue();
@@ -106,9 +96,8 @@ public class I2b2XmlPostSupport {
         return strWriter.toString();
     }
     
-    protected InputStream executePost(String xml) throws IOException {
-        URL url = new URL(this.properties.getProxyUrl());
-        HttpURLConnection openConnection = (HttpURLConnection) url.openConnection();
+    protected InputStream executePost(URL proxyUrl, String xml) throws IOException {
+        HttpURLConnection openConnection = (HttpURLConnection) proxyUrl.openConnection();
         openConnection.setRequestMethod("POST");
         openConnection.setRequestProperty("Content-Type", "text/xml");
         openConnection.setDoOutput(true);

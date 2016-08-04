@@ -23,7 +23,6 @@ import org.eurekaclinical.i2b2.client.comm.I2b2AuthMetadata;
 import org.eurekaclinical.i2b2.client.comm.I2b2PatientSet;
 import org.eurekaclinical.i2b2.client.comm.I2b2Concept;
 import org.eurekaclinical.i2b2.client.pdo.I2b2PdoResults;
-import org.eurekaclinical.i2b2.client.xml.I2b2XmlException;
 
 import java.util.Collection;
 
@@ -33,7 +32,7 @@ import java.util.Collection;
  * @author Michel Mansour
  * @since 1.0
  */
-public interface I2b2PdoRetriever {
+interface I2b2PdoRetriever {
 
     /**
      * Attempts to retrieve PDO results from i2b2 for the given patient set. The
@@ -46,10 +45,10 @@ public interface I2b2PdoRetriever {
      * @param patientSet the i2b2 patient set to retrieve
      * @return a {@link I2b2PdoResults} object containing the patients, events,
      * observers, and observations retrieved from i2b2
-     * @throws I2b2XmlException if an error occurs while processing the XML
-     * returned by i2b2
+     * @throws I2b2PdoRetrieverException if an error occurs while trying to
+     * retrieve the patient data object.
      */
-    public I2b2PdoResults retrieve(I2b2AuthMetadata authMetadata,
+    I2b2PdoResults retrieve(I2b2AuthMetadata authMetadata,
             Collection<I2b2Concept> concepts,
-            I2b2PatientSet patientSet) throws I2b2XmlException;
+            I2b2PatientSet patientSet) throws I2b2PdoRetrieverException;
 }

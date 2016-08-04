@@ -20,10 +20,6 @@ package org.eurekaclinical.i2b2.client;
  * #L%
  */
 import org.eurekaclinical.i2b2.client.comm.I2b2AuthMetadata;
-import org.eurekaclinical.i2b2.client.xml.I2b2XmlException;
-import org.eurekaclinical.i2b2.client.xml.XmlUtil;
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.slf4j.Logger;
@@ -36,13 +32,18 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
-import org.eurekaclinical.i2b2.client.props.I2b2Properties;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 /**
  * Implementation of the i2b2 user authentication interface. It authenticates
@@ -53,30 +54,18 @@ import org.eurekaclinical.i2b2.client.props.I2b2Properties;
  * @author Michel Mansour
  * @since 1.0
  */
-public final class I2b2UserAuthenticatorImpl implements I2b2UserAuthenticator {
+final class I2b2UserAuthenticatorImpl extends AbstractI2b2Messager implements I2b2UserAuthenticator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(I2b2UserAuthenticatorImpl.class);
 
-    private final Configuration config;
-    private final I2b2Properties properties;
-    private final I2b2XmlPostSupport i2b2XmlPostSupport;
-
     /**
-     * @param inProperties
-     * @param inI2b2XmlPostSupport
+     * Creates object for creating an i2b2 session.
      */
-    @Inject
-    public I2b2UserAuthenticatorImpl(I2b2Properties inProperties,
-            I2b2XmlPostSupport inI2b2XmlPostSupport) {
-        this.config = new Configuration();
-        this.config.setClassForTemplateLoading(this.getClass(), "/");
-        this.config.setObjectWrapper(new DefaultObjectWrapper());
-        this.i2b2XmlPostSupport = inI2b2XmlPostSupport;
-        this.properties = inProperties;
+    I2b2UserAuthenticatorImpl() {
     }
 
     @Override
-    public boolean authenticateUser(I2b2AuthMetadata authMetadata) throws I2b2XmlException {
+    public String authenticateUser(I2b2AuthMetadata authMetadata) throws I2b2AuthenticationException {
         try {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Attempting to authenticate i2b2 user: {} with password node: {} in domain {} for project {}",
@@ -85,24 +74,26 @@ public final class I2b2UserAuthenticatorImpl implements I2b2UserAuthenticator {
                             authMetadata.getDomain(), authMetadata.getProjectId()});
             }
 
-            Template tmpl = this.config.getTemplate(I2b2CommUtil.TEMPLATES_DIR + "/i2b2_user_auth.ftl");
+            Template tmpl = getTemplate(I2b2CommUtil.TEMPLATES_DIR + "/i2b2_get_user_configuration.ftl");
             StringWriter writer = new StringWriter();
 
             DateFormat sdf = new SimpleDateFormat(I2b2CommUtil.I2B2_DATE_FMT);
             Date now = new Date();
-            String messageId = this.i2b2XmlPostSupport.generateMessageId();
+            String messageId = generateMessageId();
 
             Map<String, Object> params = new HashMap<>();
-            params.put("redirectHost", this.properties.getI2b2ServiceHostUrl());
+            params.put("redirectHost", authMetadata.getRedirectHost());
             params.put("domain", authMetadata.getDomain());
             params.put("username", authMetadata.getUsername());
             params.put("passwordNode", authMetadata.getPasswordNode());
             params.put("messageId", messageId);
             params.put("messageDatetime", sdf.format(now));
             params.put("projectId", authMetadata.getProjectId());
+            params.put("sendingFacilityName", getSendingFacilityName());
+            params.put("countryCode", Locale.getDefault().getISO3Country());
 
             tmpl.process(params, writer);
-            Document respXml = this.i2b2XmlPostSupport.postXmlToI2b2(writer.toString());
+            Document respXml = doPost(new URL(authMetadata.getProxyUrl()), writer.toString());
 
             String status = (String) XmlUtil.evalXPath(respXml,
                     "//response_header/result_status/status/@type",
@@ -110,9 +101,18 @@ public final class I2b2UserAuthenticatorImpl implements I2b2UserAuthenticator {
 
             LOGGER.debug("Received authentication status: {}", status);
 
-            return "DONE".equalsIgnoreCase(status);
+            if (status.equals("ERROR")) {
+                throw new I2b2AuthenticationException("Error while authenticating user. Please contact the administrator.");
+            }
+            NodeList nList = respXml.getElementsByTagName("password");
+            Element passwordNode = (Element) nList.item(0);
+
+            DOMImplementationLS lsImpl = (DOMImplementationLS) passwordNode.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
+            LSSerializer serializer = lsImpl.createLSSerializer();
+            serializer.getDomConfig().setParameter("xml-declaration", false);
+            return serializer.writeToString(passwordNode);
         } catch (IOException | XPathExpressionException | SAXException | ParserConfigurationException | TemplateException e) {
-            throw new I2b2XmlException(e);
+            throw new I2b2AuthenticationException(e);
         }
 
     }

@@ -1,10 +1,10 @@
 package org.eurekaclinical.i2b2.client;
 
-/*
+/*-
  * #%L
- * i2b2 Export Service
+ * i2b2 Client
  * %%
- * Copyright (C) 2013 Emory University
+ * Copyright (C) 2016 Emory University
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,28 @@ package org.eurekaclinical.i2b2.client;
  * limitations under the License.
  * #L%
  */
-import org.eurekaclinical.i2b2.client.comm.I2b2AuthMetadata;
 
 /**
- * Interface for creating an i2b2 session using connection and authentication 
- * metadata.
  *
- * @author Michel Mansour
- * @since 1.0
+ * @author Andrew Post
  */
-interface I2b2UserAuthenticator {
+public class I2b2ClientCloseException extends I2b2Exception {
 
-    /**
-     * Creates an i2b2 session.
-     *
-     * @param authMetadata the connection and authentication metadata.
-     * 
-     * @return a password node containing a session.
-     * @throws I2b2AuthenticationException
-     * 
-     */
-    String authenticateUser(I2b2AuthMetadata authMetadata) throws I2b2AuthenticationException;
+    private static final long serialVersionUID = 1L;
+
+    public I2b2ClientCloseException() {
+    }
+
+    public I2b2ClientCloseException(String message) {
+        super(message);
+    }
+
+    public I2b2ClientCloseException(Throwable cause) {
+        super(cause);
+    }
+
+    public I2b2ClientCloseException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    
 }

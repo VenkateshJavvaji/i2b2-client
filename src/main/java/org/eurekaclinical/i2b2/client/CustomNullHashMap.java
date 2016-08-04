@@ -1,4 +1,4 @@
-package org.eurekaclinical.i2b2.client.pdo;
+package org.eurekaclinical.i2b2.client;
 
 /*
  * #%L
@@ -30,7 +30,7 @@ import java.util.HashMap;
  * @author Michel Mansour
  * @since 1.0
  */
-public class CustomNullHashMap<K, V> extends HashMap<K, V> {
+class CustomNullHashMap<K, V> extends HashMap<K, V> {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class CustomNullHashMap<K, V> extends HashMap<K, V> {
      * @param missingKeyValue the value that {@link #get(Object)} should return
      * if a key is not in the map
      */
-    public CustomNullHashMap(V missingKeyValue) {
+    CustomNullHashMap(V missingKeyValue) {
         super();
         this.missingKeyValue = missingKeyValue;
     }
@@ -51,7 +51,7 @@ public class CustomNullHashMap<K, V> extends HashMap<K, V> {
     /**
      * Default constructor. Sets the missing value to <code>null</code>.
      */
-    public CustomNullHashMap() {
+    CustomNullHashMap() {
         this(null);
     }
 

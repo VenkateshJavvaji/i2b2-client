@@ -1,10 +1,10 @@
 package org.eurekaclinical.i2b2.client;
 
-/*
+/*-
  * #%L
- * i2b2 Export Service
+ * i2b2 Client
  * %%
- * Copyright (C) 2013 Emory University
+ * Copyright (C) 2016 Emory University
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,31 @@ package org.eurekaclinical.i2b2.client;
  * limitations under the License.
  * #L%
  */
+
 /**
- * General exception thrown from the application. It wraps any lower level
- * exceptions.
+ * An exception for errors that occur when dealing with i2b2 XML messaging.
  *
  * @author Michel Mansour
  * @since 1.0
  */
-public abstract class I2b2Exception extends Exception {
+class I2b2XmlException extends Exception {
+
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Default no-arg constructor.
+     * Default no-arg constructor
      */
-    I2b2Exception() {
+    I2b2XmlException() {
+    }
 
+    /**
+     * Creates an exception with the given message and cause to wrap.
+     *
+     * @param message the exception's message
+     * @param cause the {@link Throwable} cause to wrap
+     */
+    I2b2XmlException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
@@ -40,7 +51,7 @@ public abstract class I2b2Exception extends Exception {
      *
      * @param message the exception's message
      */
-    I2b2Exception(String message) {
+    I2b2XmlException(String message) {
         super(message);
     }
 
@@ -49,18 +60,8 @@ public abstract class I2b2Exception extends Exception {
      *
      * @param cause the {@link Throwable} cause to wrap
      */
-    I2b2Exception(Throwable cause) {
+    I2b2XmlException(Throwable cause) {
         super(cause);
-    }
-
-    /**
-     * Creates an exception with the given message wrapping the given cause.
-     *
-     * @param message the exception's message
-     * @param cause the {@link Throwable} cause to wrap
-     */
-    I2b2Exception(String message, Throwable cause) {
-        super(message, cause);
     }
 
 }

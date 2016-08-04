@@ -22,12 +22,7 @@ package org.eurekaclinical.i2b2.client;
 import org.eurekaclinical.i2b2.client.comm.I2b2AuthMetadata;
 import org.eurekaclinical.i2b2.client.comm.I2b2PatientSet;
 import org.eurekaclinical.i2b2.client.comm.I2b2Concept;
-import org.eurekaclinical.i2b2.client.props.I2b2Properties;
-import org.eurekaclinical.i2b2.client.pdo.I2b2PdoResultParser;
 import org.eurekaclinical.i2b2.client.pdo.I2b2PdoResults;
-import org.eurekaclinical.i2b2.client.xml.I2b2XmlException;
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.w3c.dom.Document;
@@ -36,10 +31,12 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import javax.inject.Inject;
 
 /**
  * Implementation of the i2b2 PDO retriever interface. It retrieves the data by
@@ -49,59 +46,42 @@ import javax.inject.Inject;
  * @author Michel Mansour
  * @since 1.0
  */
-public final class I2b2PdoRetrieverImpl implements I2b2PdoRetriever {
-
-    private final Configuration config;
-    private final I2b2XmlPostSupport i2b2XmlPostSupport;
-    private final I2b2Properties properties;
+final class I2b2PdoRetrieverImpl extends AbstractI2b2Messager implements I2b2PdoRetriever {
 
     /**
-     * Default no-arg constructor.
-     * @param inProperties
-     * @param inI2b2XmlPostSupport
      */
-    @Inject
-    public I2b2PdoRetrieverImpl(I2b2Properties inProperties,
-            I2b2XmlPostSupport inI2b2XmlPostSupport) {
-        this.config = new Configuration();
-        this.config.setClassForTemplateLoading(this.getClass(), "/");
-        this.config.setObjectWrapper(new DefaultObjectWrapper());
-        this.config.setNumberFormat("0.######");  // to prevent addition of commas to numbers
-        // FreeMarker uses the locale to format numbers
-        // in a human-readable way, but this XML is not
-        // for humans.
-        this.i2b2XmlPostSupport = inI2b2XmlPostSupport;
-        this.properties = inProperties;
+    I2b2PdoRetrieverImpl() {
     }
 
     @Override
     public I2b2PdoResults retrieve(I2b2AuthMetadata authMetadata,
             Collection<I2b2Concept> concepts,
-            I2b2PatientSet patientSet) throws I2b2XmlException {
+            I2b2PatientSet patientSet) throws I2b2PdoRetrieverException {
         try {
-            Template tmpl = this.config.getTemplate(I2b2CommUtil.TEMPLATES_DIR + "/i2b2_pdo_request.ftl");
+            Template tmpl = getTemplate(I2b2CommUtil.TEMPLATES_DIR + "/i2b2_pdo_request.ftl");
             StringWriter writer = new StringWriter();
 
-            String messageId = this.i2b2XmlPostSupport.generateMessageId();
-
             Map<String, Object> params = new HashMap<>();
-            params.put("redirectHost", this.properties.getI2b2ServiceHostUrl());
+            params.put("redirectHost", authMetadata.getRedirectHost());
             params.put("domain", authMetadata.getDomain());
             params.put("username", authMetadata.getUsername());
             params.put("passwordNode", authMetadata.getPasswordNode());
-            params.put("messageId", messageId);
+            params.put("messageId", generateMessageId());
             params.put("projectId", authMetadata.getProjectId());
             params.put("patientListMax", patientSet.getPatientSetSize());
             params.put("patientListMin", "1");
             params.put("patientSetCollId", patientSet.getPatientSetCollId());
             params.put("items", concepts);
+            params.put("sendingFacilityName", getSendingFacilityName());
+            params.put("countryCode", Locale.getDefault().getISO3Country());
+            params.put("todayDate", new Date());
 
             tmpl.process(params, writer);
-            Document respXml = this.i2b2XmlPostSupport.postXmlToI2b2(writer.toString());
+            Document respXml = doPost(new URL(authMetadata.getProxyUrl()), writer.toString());
             I2b2PdoResultParser parser = new I2b2PdoResultParser(respXml);
             return parser.parse();
-        } catch (IOException | TemplateException | SAXException | ParserConfigurationException e) {
-            throw new I2b2XmlException(e);
+        } catch (IOException | TemplateException | SAXException | ParserConfigurationException | I2b2XmlException e) {
+            throw new I2b2PdoRetrieverException(e);
         }
     }
 }

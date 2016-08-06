@@ -1,10 +1,10 @@
 package org.eurekaclinical.i2b2.client;
 
-/*
+/*-
  * #%L
- * i2b2 Export Service
+ * i2b2 Client
  * %%
- * Copyright (C) 2013 Emory University
+ * Copyright (C) 2016 Emory University
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ package org.eurekaclinical.i2b2.client;
  * #L%
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Class for utility methods for communicating with i2b2.
  *
@@ -31,17 +28,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class I2b2CommUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(I2b2CommUtil.class);
-
 	/*
 	 * the location of the project's i2b2 messaging XML templates
 	 */
 	static final String TEMPLATES_DIR = "i2b2-xml-templates";
-
-	/*
-	 * The i2b2 date format. The colon (:) must be stripped out of the timezone portion first.
-	 */
-	public static final String I2B2_DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	/**
 	 * Private constructor to prevent instantiation

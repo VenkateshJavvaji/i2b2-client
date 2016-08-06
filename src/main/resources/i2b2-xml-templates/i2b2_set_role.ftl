@@ -65,7 +65,7 @@
         <pm:set_role>
             <user_name>${username}</user_name>
 	    <role>${role}</role>
-            <project_id>${projectId}</project_id>
+            <project_id>${i2b2ProjectId}</project_id>
         </pm:set_role>
     </message_body>
 </i2b2:request>

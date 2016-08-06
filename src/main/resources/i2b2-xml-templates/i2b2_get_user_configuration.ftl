@@ -63,7 +63,7 @@
     </request_header>
     <message_body>
         <pm:get_user_configuration>
-            <project>${projectId}</project>
+            <project>${i2b2ProjectId!}</project>
         </pm:get_user_configuration>
     </message_body>
 </i2b2:request>

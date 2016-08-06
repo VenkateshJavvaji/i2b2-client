@@ -24,7 +24,7 @@ import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -49,18 +49,18 @@ class I2b2RoleSetterImpl extends AbstractI2b2Messager implements I2b2RoleSetter 
         try {
             Template tmpl = getTemplate(I2b2CommUtil.TEMPLATES_DIR + "/i2b2_set_role.ftl");
             StringWriter writer = new StringWriter();
-
+            
             Map<String, Object> params = new HashMap<>();
             params.put("redirectHost", authMetadata.getRedirectHost());
             params.put("adminUsername", authMetadata.getUsername());
             params.put("adminPasswordNode", authMetadata.getPasswordNode());
             params.put("messageId", generateMessageId());
             params.put("domain", authMetadata.getDomain());
-            params.put("projectId", authMetadata.getProjectId());
+            params.put("i2b2ProjectId", projectId);
             params.put("username", username);
             params.put("role", role);
             params.put("sendingFacilityName", getSendingFacilityName());
-            params.put("todayDate", new Date());
+            params.put("todayDate", Instant.now().toString());
             params.put("countryCode", Locale.getDefault().getISO3Country());
             tmpl.process(params, writer);
             Document respXml = doPost(new URL(authMetadata.getProxyUrl()), writer.toString());

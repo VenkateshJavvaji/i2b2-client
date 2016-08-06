@@ -33,13 +33,10 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import javax.inject.Inject;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -77,8 +74,6 @@ final class I2b2UserAuthenticatorImpl extends AbstractI2b2Messager implements I2
             Template tmpl = getTemplate(I2b2CommUtil.TEMPLATES_DIR + "/i2b2_get_user_configuration.ftl");
             StringWriter writer = new StringWriter();
 
-            DateFormat sdf = new SimpleDateFormat(I2b2CommUtil.I2B2_DATE_FMT);
-            Date now = new Date();
             String messageId = generateMessageId();
 
             Map<String, Object> params = new HashMap<>();
@@ -87,8 +82,8 @@ final class I2b2UserAuthenticatorImpl extends AbstractI2b2Messager implements I2
             params.put("username", authMetadata.getUsername());
             params.put("passwordNode", authMetadata.getPasswordNode());
             params.put("messageId", messageId);
-            params.put("messageDatetime", sdf.format(now));
-            params.put("projectId", authMetadata.getProjectId());
+            params.put("messageDatetime", Instant.now().toString());
+            params.put("i2b2ProjectId", authMetadata.getProjectId());
             params.put("sendingFacilityName", getSendingFacilityName());
             params.put("countryCode", Locale.getDefault().getISO3Country());
 

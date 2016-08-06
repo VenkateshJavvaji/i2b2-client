@@ -32,8 +32,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
+import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -60,21 +60,21 @@ final class I2b2PdoRetrieverImpl extends AbstractI2b2Messager implements I2b2Pdo
         try {
             Template tmpl = getTemplate(I2b2CommUtil.TEMPLATES_DIR + "/i2b2_pdo_request.ftl");
             StringWriter writer = new StringWriter();
-
+            
             Map<String, Object> params = new HashMap<>();
             params.put("redirectHost", authMetadata.getRedirectHost());
             params.put("domain", authMetadata.getDomain());
             params.put("username", authMetadata.getUsername());
             params.put("passwordNode", authMetadata.getPasswordNode());
             params.put("messageId", generateMessageId());
-            params.put("projectId", authMetadata.getProjectId());
+            params.put("i2b2ProjectId", authMetadata.getProjectId());
             params.put("patientListMax", patientSet.getPatientSetSize());
             params.put("patientListMin", "1");
             params.put("patientSetCollId", patientSet.getPatientSetCollId());
             params.put("items", concepts);
             params.put("sendingFacilityName", getSendingFacilityName());
             params.put("countryCode", Locale.getDefault().getISO3Country());
-            params.put("todayDate", new Date());
+            params.put("todayDate", Instant.now().toString());
 
             tmpl.process(params, writer);
             Document respXml = doPost(new URL(authMetadata.getProxyUrl()), writer.toString());

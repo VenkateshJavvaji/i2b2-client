@@ -62,7 +62,7 @@ public final class I2b2AuthMetadata {
     public I2b2AuthMetadata(I2b2AuthMetadata i2b2AuthMetadata) {
         if (i2b2AuthMetadata != null) {
             this.domain = i2b2AuthMetadata.domain;
-            this.username = i2b2AuthMetadata.domain;
+            this.username = i2b2AuthMetadata.username;
             this.passwordNode = i2b2AuthMetadata.passwordNode;
             this.projectId = i2b2AuthMetadata.projectId;
             this.redirectHost = i2b2AuthMetadata.redirectHost;

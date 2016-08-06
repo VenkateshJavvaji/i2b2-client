@@ -62,7 +62,7 @@
         <accept_acknowledgement_type>AL</accept_acknowledgement_type>
         <application_acknowledgement_type>AL</application_acknowledgement_type>
         <country_code>${countryCode}</country_code>
-        <project_id>${projectId}</project_id>
+        <project_id>${i2b2ProjectId}</project_id>
     </message_header>
     <request_header>
         <result_waittime_ms>180000</result_waittime_ms>

@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.eurekaclinical</groupId>
         <artifactId>eurekaclinical-parent-standard-deps</artifactId>
-        <version>1</version>
+        <version>2-Beta-4</version>
     </parent>
 
     <url>https://github.com/eurekaclinical/i2b2-client.git</url>
@@ -29,10 +29,6 @@
         <url>https://github.com/eurekaclinical/i2b2-client/issues</url>
     </issueManagement>
     
-    <properties>
-        <eurekaclinical-common-version>2.0-Alpha-14</eurekaclinical-common-version>
-    </properties>
-	
     <build>
         <plugins>
             <plugin>
@@ -72,11 +68,6 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

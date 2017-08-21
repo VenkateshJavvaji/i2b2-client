@@ -14,8 +14,7 @@ limitations under the License.
 
 This project includes:
   Apache Commons Lang under Apache License, Version 2.0
-  FreeMarker under Apache License, Version 2.0
+  Apache FreeMarker under Apache License, Version 2.0
   i2b2 Client under Apache License, Version 2.0
-  javax.inject under The Apache Software License, Version 2.0
   SLF4J API Module under MIT License
 

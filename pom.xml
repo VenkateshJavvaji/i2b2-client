@@ -24,9 +24,9 @@
         <tag>HEAD</tag>
     </scm>
     
-	<properties>
+	<!-- properties>
 	<maven.javadoc.skip>true</maven.javadoc.skip>
-	</properties>
+	</properties-->
 	
     <issueManagement>
         <system>GitHub</system>
